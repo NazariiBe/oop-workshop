@@ -89,4 +89,16 @@ public class CheckoutServiceTest {
 
         assertThat(check.getTotalPoints(), is(31));
     }
+
+    @Test
+    void useOffer__whenCheckIsClosed() {
+        checkoutService.addProduct(milk_7);
+        checkoutService.addProduct(milk_7);
+        checkoutService.addProduct(bred_3);
+
+        checkoutService.useOffer(new FactorByCategoryOffer(Category.MILK, 2));
+        Check check = checkoutService.closeCheck();
+        checkoutService.useOffer(new FactorByCategoryOffer(Category.MILK, 2));
+        assertThat(check.getTotalPoints(), is(31));
+    }
 }
