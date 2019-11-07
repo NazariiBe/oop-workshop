@@ -11,6 +11,6 @@ public class FactorReward implements Reward {
 
     @Override
     public int get(Check check) {
-        return (int) (check.getTotalCost() * factor);
+        return (int) (check.getTotalCostWithDiscount() * factor);
     }
 }

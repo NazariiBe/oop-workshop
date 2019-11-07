@@ -16,7 +16,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class CheckoutServiceTest {
-    private LocalDate now;
     private LocalDate tomorrow;
     private LocalDate yestarday;
 
@@ -38,7 +37,7 @@ public class CheckoutServiceTest {
         service = new CheckoutService();
         service.openCheck();
 
-        now = LocalDate.now();
+        LocalDate now = LocalDate.now();
         tomorrow = now.plusDays(1);
         yestarday = now.minusDays(1);
 
@@ -144,6 +143,19 @@ public class CheckoutServiceTest {
     }
 
     @Test
+    void useOffer__FalseCond() {
+        addTwo_10();
+        use(new BonusOffer(
+                tomorrow,
+                "Name",
+                falseCond(),
+                new FlatReward(10)
+        ));
+
+        points(close(), 10);
+    }
+
+    @Test
     void useOffer__FactorDiscount() {
         addTwo_10();
         service.useOffer(new DiscountOffer(
@@ -159,30 +171,27 @@ public class CheckoutServiceTest {
         real(check, 5);
     }
 
-    private BonusOffer flatbonus(LocalDate to, Condition condition, int reward) {
-        return new BonusOffer(to, "bonus", condition, new FlatReward(reward));
-    }
-
-    private void useExpiredBonusOffer(Condition condition, int reward) {
-        service.useOffer(flatbonus(yestarday, condition, reward));
-    }
-
-    private void useNotExpiredBonusOffer(Condition condition, int reward) {
-        service.useOffer(flatbonus(tomorrow, condition, reward));
-    }
-
     private Condition trueCond() {
         return new MinimalCostCondition(0);
     }
 
     private Condition falseCond() {
-        return new MinimalCostCondition(99999);
+        return new MinimalCostCondition(9999);
+    }
+
+    private void use(Offer offer) {
+        service.useOffer(offer);
     }
 
     @Test
     void useOffer__Expired__TrueCond() {
         addTwo_10();
-        useExpiredBonusOffer(trueCond(), 10);
+        use(new BonusOffer(
+                yestarday,
+                "name",
+                trueCond(),
+                new FlatReward(10)
+        ));
 
         points(close(), 10);
     }
@@ -190,7 +199,12 @@ public class CheckoutServiceTest {
     @Test
     void useOffer__NotExpired__FalseCond() {
         addTwo_10();
-        useNotExpiredBonusOffer(falseCond(), 10);
+        use(new BonusOffer(
+                tomorrow,
+                "name",
+                falseCond(),
+                new FlatReward(10)
+        ));
 
         points(close(), 10);
     }
@@ -198,21 +212,43 @@ public class CheckoutServiceTest {
     @Test
     void useOffer__NoOrder() {
         addTwo_10();
+        use(new BonusOffer(
+                tomorrow,
+                "name",
+                trueCond(),
+                new FlatReward(10)
+        ));
         addTwo_10();
-        useNotExpiredBonusOffer(trueCond(), 10);
 
         points(close(), 30);
     }
+
+    @Test
+    void useOffer__discount__and__bonus() {
+        addTwo_10();
+        addTwo_10();
+        addTwo_10();
+
+        use(new DiscountOffer(
+                tomorrow,
+                "name",
+                trueCond(),
+                new FixedDiscount(10))
+        );
+
+        use(new BonusOffer(
+                tomorrow,
+                "name",
+                new MinimalCostCondition(30),
+                new FlatReward(10)
+        ));
+
+        Check check = close();
+        total(check, 30);
+        points(check, 30);
+        real(check, 20);
+    }
 }
-
-
-
-
-
-
-
-
-
 
 
 

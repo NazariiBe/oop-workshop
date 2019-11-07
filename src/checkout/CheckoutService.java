@@ -3,6 +3,12 @@ package checkout;
 import checkout.offers.BonusOffer;
 import checkout.offers.DiscountOffer;
 import checkout.offers.Offer;
+import checkout.offers.discounts.Discount;
+import checkout.offers.discounts.FixedDiscount;
+import checkout.offers.rewards.FactorReward;
+import checkout.offers.rewards.FlatReward;
+import checkout.offers.rewards.Reward;
+import com.sun.source.tree.LambdaExpressionTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +31,7 @@ public class CheckoutService {
     public Check closeCheck() {
         Check closedCheck = this.check;
 
-        for (Offer offer: offers) {
-            if (offer instanceof DiscountOffer) offer.apply(check);
-        }
-        for (Offer offer: offers) {
-            if (offer instanceof BonusOffer) offer.apply(check);
-        }
+        for (Offer offer: offers) offer.apply(check);
 
         this.reset();
 

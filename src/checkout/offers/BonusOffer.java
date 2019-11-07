@@ -14,6 +14,10 @@ public class BonusOffer extends ExpirableOffer {
         this.reward = reward;
     }
 
+    public Reward getReward() {
+        return reward;
+    }
+
     @Override
     public void perform(Check check) {
         int points = reward.get(check);

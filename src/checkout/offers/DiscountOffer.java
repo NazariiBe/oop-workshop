@@ -14,6 +14,10 @@ public class DiscountOffer extends ExpirableOffer {
         this.discount = discount;
     }
 
+    public Discount getDiscount() {
+        return discount;
+    }
+
     @Override
     public void perform(Check check) {
         int discountvalue = discount.get(check);

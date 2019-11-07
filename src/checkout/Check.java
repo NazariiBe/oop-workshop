@@ -17,12 +17,16 @@ public class Check {
         return totalCost;
     }
 
+    public int getTotalCostWithDiscount() {
+        return getTotalCost() - getAllDiscouts();
+    }
+
     void addProduct(Product product) {
         products.add(product);
     }
 
     public int getAllPoints() {
-        return getSum(this.rewards) + getTotalCost();
+        return getSum(this.rewards) + getTotalCostWithDiscount();
     }
 
     public int getAllDiscouts() {
