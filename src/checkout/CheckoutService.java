@@ -1,7 +1,12 @@
 package checkout;
 
+import checkout.offers.BonusOffer;
+import checkout.offers.DiscountOffer;
+import checkout.offers.Offer;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 
 public class CheckoutService {
     private List<Offer> offers = new ArrayList();
@@ -20,12 +25,22 @@ public class CheckoutService {
 
     public Check closeCheck() {
         Check closedCheck = this.check;
-//      Apply
-        for (Offer offer: offers) offer.apply(check);
-//      Reset
-        this.check = null;
-        offers.clear();
+
+        for (Offer offer: offers) {
+            if (offer instanceof DiscountOffer) offer.apply(check);
+        }
+        for (Offer offer: offers) {
+            if (offer instanceof BonusOffer) offer.apply(check);
+        }
+
+        this.reset();
+
         return closedCheck;
+    }
+
+    public void reset() {
+        offers.clear();
+        this.check = null;
     }
 
     public void useOffer(Offer offer) {
