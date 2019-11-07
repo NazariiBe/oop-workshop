@@ -14,18 +14,18 @@ public class Check {
         for (Product product : this.products) {
             totalCost += product.getPrice();
         }
-        return totalCost - getAllDiscouts();
+        return totalCost;
     }
 
     void addProduct(Product product) {
         products.add(product);
     }
 
-    int getAllPoints() {
-        return getSum(this.rewards);
+    public int getAllPoints() {
+        return getSum(this.rewards) + getTotalCost();
     }
 
-    int getAllDiscouts() {
+    public int getAllDiscouts() {
         return getSum(this.discounts);
     }
 
