@@ -233,8 +233,8 @@ public class CheckoutServiceTest {
                 tomorrow,
                 "name",
                 trueCond(),
-                new FixedDiscount(10))
-        );
+                new FixedDiscount(10)
+        ));
 
         use(new BonusOffer(
                 tomorrow,
@@ -247,6 +247,31 @@ public class CheckoutServiceTest {
         total(check, 30);
         points(check, 30);
         real(check, 20);
+    }
+
+    @Test
+    void useOffer__discountFlatAndPersent() {
+        addTwo_10();
+        addTwo_10();
+        addTwo_10();
+        addTwo_10();
+
+        use(new DiscountOffer(
+                tomorrow,
+                "name",
+                trueCond(),
+                new PersentDiscount(0.5f)
+        ));
+
+        use(new DiscountOffer(
+                tomorrow,
+                "name",
+                trueCond(),
+                new FixedDiscount(10)
+        ));
+
+        Check check = close();
+        real(check, 15);
     }
 }
 

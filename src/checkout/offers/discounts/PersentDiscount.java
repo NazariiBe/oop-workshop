@@ -11,6 +11,6 @@ public class PersentDiscount implements Discount {
 
     @Override
     public int get(Check check) {
-        return (int) (check.getTotalCost() * percent);
+        return (int) (check.getTotalCostWithDiscount() * percent);
     }
 }

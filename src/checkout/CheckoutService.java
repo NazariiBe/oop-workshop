@@ -5,6 +5,7 @@ import checkout.offers.DiscountOffer;
 import checkout.offers.Offer;
 import checkout.offers.discounts.Discount;
 import checkout.offers.discounts.FixedDiscount;
+import checkout.offers.discounts.PersentDiscount;
 import checkout.offers.rewards.FactorReward;
 import checkout.offers.rewards.FlatReward;
 import checkout.offers.rewards.Reward;
@@ -31,7 +32,23 @@ public class CheckoutService {
     public Check closeCheck() {
         Check closedCheck = this.check;
 
-        for (Offer offer: offers) offer.apply(check);
+        offers.stream()
+                .sorted((Offer a, Offer b) -> {
+                    if (a instanceof DiscountOffer & b instanceof DiscountOffer) {
+                        Discount discountA = ((DiscountOffer) a).getDiscount();
+                        Discount discountB = ((DiscountOffer) b).getDiscount();
+
+                        if (discountA instanceof FixedDiscount & discountB instanceof PersentDiscount) {
+                            return -1;
+                        }
+                        if (discountA instanceof PersentDiscount & discountB instanceof FixedDiscount) {
+                            return 1;
+                        }
+                        return 0;
+                    }
+                    return 0;
+                })
+                .forEach(offer -> offer.apply(check));
 
         this.reset();
 
